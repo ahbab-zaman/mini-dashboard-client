@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -25,61 +25,94 @@ function SortableItem({ id, title, category }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="p-3 m-2 bg-white text-black rounded shadow cursor-move"
+      className="p-3 m-2 bg-gradient-to-br from-[#2E3B55] to-[#1A2537] border-gray-700 text-white rounded-md cursor-move shadow-md transition-transform transform hover:scale-105 hover:duration-500 font-bold text-lg border"
     >
       <h4 className="font-bold">{title}</h4>
-      <p className="text-sm text-gray-600">{category}</p>
+      <p className="text-sm text-slate-200">{category}</p>
     </div>
   );
 }
 
 export default function DragDropBoard() {
-  const [tasks, setTasks] = useState([
-    { id: "1", title: "Design login UI", category: "Daily Goal" },
-    { id: "2", title: "Create modal for goals", category: "Weekly Goal" },
-    { id: "3", title: "Add drag-and-drop", category: "Monthly Goal" },
-  ]);
+  const [tasks, setTasks] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newCategory, setNewCategory] = useState(goals[0]);
-  const [selectedCategory, setSelectedCategory] = useState("Daily Goal");
+  const [selectedCategory, setSelectedCategory] = useState(goals[0]);
 
-  // Filter tasks by selected category
+  // Load tasks from localStorage
+  useEffect(() => {
+    const storedTasks = localStorage.getItem("goals");
+    if (storedTasks) {
+      try {
+        const parsed = JSON.parse(storedTasks);
+        if (Array.isArray(parsed)) {
+          setTasks(parsed);
+        }
+      } catch (err) {
+        console.error("Error parsing goals from localStorage", err);
+      }
+    }
+
+    // Optionally restore selected category
+    const storedCategory = localStorage.getItem("selectedCategory");
+    if (storedCategory && goals.includes(storedCategory)) {
+      setSelectedCategory(storedCategory);
+    }
+  }, []);
+
+  // Save tasks to localStorage
+  useEffect(() => {
+    localStorage.setItem("goals", JSON.stringify(tasks));
+  }, [tasks]);
+
+  // Save selected category to localStorage
+  useEffect(() => {
+    localStorage.setItem("selectedCategory", selectedCategory);
+  }, [selectedCategory]);
+
   const filteredTasks = tasks.filter(
     (task) => task.category === selectedCategory
   );
-  const completedCount = 1; // simulate 1/3 done
-  const progress = Math.floor((completedCount / tasks.length) * 100);
+
+  const completedCount = 1;
+  const progress =
+    tasks.length > 0 ? Math.floor((completedCount / tasks.length) * 100) : 0;
 
   function handleDragEnd(event) {
     const { active, over } = event;
-    if (active.id !== over.id) {
-      setTasks((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
+    if (!over) return;
+
+    const oldIndex = tasks.findIndex((t) => t.id === active.id);
+    const newIndex = tasks.findIndex((t) => t.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    setTasks((items) => arrayMove(items, oldIndex, newIndex));
   }
 
   function handleAddTask() {
-    if (!newTitle) return;
+    if (!newTitle.trim()) return;
+
     const newTask = {
       id: Date.now().toString(),
-      title: newTitle,
+      title: newTitle.trim(),
       category: newCategory,
     };
-    setTasks([...tasks, newTask]);
+
+    setTasks((prev) => [...prev, newTask]);
     setNewTitle("");
     setNewCategory(goals[0]);
     setShowModal(false);
+
+    // Optionally auto-switch to new task’s category
+    setSelectedCategory(newCategory);
   }
 
   return (
-    <div className="relative p-4  min-h-screen text-white">
+    <div className="relative p-4 min-h-screen text-white">
       <h2 className="text-3xl font-bold mb-4">🎯 Your Goals</h2>
 
-      {/* Progress Bar */}
       <div className="w-full bg-gray-700 rounded-full h-4 mb-6">
         <div
           className="bg-green-500 h-4 rounded-full text-xs text-center"
@@ -89,7 +122,7 @@ export default function DragDropBoard() {
         </div>
       </div>
 
-      {/* Goal Categories */}
+      {/* Goal Category Buttons */}
       <div className="flex justify-between mb-6">
         {goals.map((goal) => (
           <button
@@ -161,21 +194,27 @@ export default function DragDropBoard() {
         </div>
       )}
 
-      {/* Drag and Drop Task List */}
+      {/* DnD Context */}
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext
           items={filteredTasks.map((task) => task.id)}
           strategy={verticalListSortingStrategy}
         >
-          <div className="bg-gray-800 p-4 rounded-md">
-            {filteredTasks.map((task) => (
-              <SortableItem
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                category={task.category}
-              />
-            ))}
+          <div className="bg-gray-800 p-4 rounded-md min-h-[100px]">
+            {filteredTasks.length === 0 ? (
+              <p className="text-center text-gray-400 py-8">
+                No goals yet in <strong>{selectedCategory}</strong>.
+              </p>
+            ) : (
+              filteredTasks.map((task) => (
+                <SortableItem
+                  key={task.id}
+                  id={task.id}
+                  title={task.title}
+                  category={task.category}
+                />
+              ))
+            )}
           </div>
         </SortableContext>
       </DndContext>
