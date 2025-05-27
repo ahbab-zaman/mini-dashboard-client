@@ -42,7 +42,12 @@ export default function DragDropBoard() {
   const [showModal, setShowModal] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newCategory, setNewCategory] = useState(goals[0]);
+  const [selectedCategory, setSelectedCategory] = useState("Daily Goal");
 
+  // Filter tasks by selected category
+  const filteredTasks = tasks.filter(
+    (task) => task.category === selectedCategory
+  );
   const completedCount = 1; // simulate 1/3 done
   const progress = Math.floor((completedCount / tasks.length) * 100);
 
@@ -71,7 +76,7 @@ export default function DragDropBoard() {
   }
 
   return (
-    <div className="relative p-4 bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 min-h-screen text-white">
+    <div className="relative p-4  min-h-screen text-white">
       <h2 className="text-3xl font-bold mb-4">🎯 Your Goals</h2>
 
       {/* Progress Bar */}
@@ -87,19 +92,24 @@ export default function DragDropBoard() {
       {/* Goal Categories */}
       <div className="flex justify-between mb-6">
         {goals.map((goal) => (
-          <div
+          <button
             key={goal}
-            className="bg-blue-800 p-4 rounded-lg shadow w-[30%] text-center"
+            onClick={() => setSelectedCategory(goal)}
+            className={`w-[30%] rounded-xl p-6 shadow-md transition-transform transform hover:scale-105 text-center font-bold text-lg border ${
+              selectedCategory === goal
+                ? "bg-gradient-to-br from-blue-500 to-indigo-700 text-white border-blue-700"
+                : "bg-gradient-to-br from-[#2E3B55] to-[#1A2537] border-gray-700 text-white"
+            }`}
           >
-            <h3 className="font-bold text-lg">{goal}</h3>
-          </div>
+            {goal}
+          </button>
         ))}
       </div>
 
       {/* Add Goal Button */}
       <div className="mb-6">
         <button
-          className="px-6 py-2 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-full transition-all duration-300 shadow-lg"
+          className="px-6 py-2 bg-blue-400 hover:bg-sky-800 text-white font-semibold rounded-full transition-all duration-300 shadow-lg"
           onClick={() => setShowModal(true)}
         >
           ➕ Add Goal
@@ -108,23 +118,27 @@ export default function DragDropBoard() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity">
-          <div className="bg-white text-black p-6 rounded-2xl shadow-xl w-96 animate-fade-in-up">
-            <h3 className="text-2xl font-bold mb-4">Add New Goal</h3>
+        <div className="fixed inset-0 bg-[#0f172a]/70 backdrop-blur-md flex justify-center items-center z-50 transition-all duration-300">
+          <div className="bg-[#1A2537]/80 p-6 rounded-2xl shadow-xl w-96 animate-fade-in-up">
+            <h3 className="text-2xl font-bold mb-4 text-white">Add New Goal</h3>
             <input
               type="text"
               placeholder="Goal Title"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              className="w-full border border-gray-300 rounded p-2 mb-4 focus:outline-none"
+              className="w-full border border-gray-500 rounded p-2 mb-4 bg-transparent text-white placeholder-gray-400 focus:outline-none"
             />
             <select
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              className="w-full border border-gray-300 rounded p-2 mb-4 focus:outline-none"
+              className="w-full border border-gray-500 rounded p-2 mb-4 bg-transparent text-white focus:outline-none"
             >
               {goals.map((cat) => (
-                <option key={cat} value={cat}>
+                <option
+                  key={cat}
+                  value={cat}
+                  className="bg-[#1A2537] text-white"
+                >
                   {cat}
                 </option>
               ))}
@@ -132,7 +146,7 @@ export default function DragDropBoard() {
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-400 text-black rounded hover:bg-gray-500"
               >
                 Cancel
               </button>
@@ -150,11 +164,11 @@ export default function DragDropBoard() {
       {/* Drag and Drop Task List */}
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext
-          items={tasks.map((task) => task.id)}
+          items={filteredTasks.map((task) => task.id)}
           strategy={verticalListSortingStrategy}
         >
           <div className="bg-gray-800 p-4 rounded-md">
-            {tasks.map((task) => (
+            {filteredTasks.map((task) => (
               <SortableItem
                 key={task.id}
                 id={task.id}
