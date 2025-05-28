@@ -1,7 +1,36 @@
+import { useState } from "react";
 import logo from "../assets/logo-icon.svg";
 import google from "../assets/google-icon.svg";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import axios from "axios";
+import toast from "react-hot-toast";
+
 const Register = () => {
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/register", {
+        username: form.name,
+        email: form.email,
+        password: form.password,
+      });
+
+      const { token } = res.data;
+      localStorage.setItem("token", token);
+      toast.success("Registered successfully!");
+      navigate("/");
+    } catch (err) {
+      console.error("Registration failed", err);
+      toast.error("Registration failed. Check console.");
+    }
+  };
+
   return (
     <section className="flex lg:flex-row flex-col text-white min-h-screen">
       {/* Left Section */}
@@ -33,13 +62,11 @@ const Register = () => {
           Sign Up
         </h2>
 
-        {/* Google Button */}
         <div className="flex items-center justify-center gap-3 border border-blue-400 w-full max-w-xs py-2 rounded-full cursor-pointer">
           <img className="w-6" src={google} alt="Google icon" />
           <h4 className="text-blue-400 font-semibold">Google</h4>
         </div>
 
-        {/* Divider */}
         <div className="flex items-center w-full max-w-xs my-6">
           <div className="flex-grow border-t border-gray-600"></div>
           <span className="mx-4 text-white font-semibold text-sm">
@@ -49,17 +76,18 @@ const Register = () => {
         </div>
 
         <div className="flex flex-col w-full max-w-xs">
-          <label className="mb-2 font-semibold" htmlFor="email">
+          <label className="mb-2 font-semibold" htmlFor="name">
             Name
           </label>
           <input
             id="name"
-            type="name"
+            type="text"
+            value={form.name}
+            onChange={handleChange}
             className="border border-[#465670] p-2 rounded-md focus:outline-none bg-transparent"
           />
         </div>
 
-        {/* Email Input */}
         <div className="flex flex-col w-full max-w-xs">
           <label className="my-2 font-semibold" htmlFor="email">
             Email
@@ -67,11 +95,12 @@ const Register = () => {
           <input
             id="email"
             type="email"
+            value={form.email}
+            onChange={handleChange}
             className="border border-[#465670] p-2 rounded-md focus:outline-none bg-transparent"
           />
         </div>
 
-        {/* Password Input */}
         <div className="flex flex-col w-full max-w-xs mt-4">
           <label className="mb-2 font-semibold" htmlFor="password">
             Password
@@ -79,16 +108,21 @@ const Register = () => {
           <input
             id="password"
             type="password"
+            value={form.password}
+            onChange={handleChange}
             className="border border-[#465670] p-2 rounded-md focus:outline-none bg-transparent"
           />
         </div>
 
-        {/* Sign In Button */}
         <div className="mt-6 w-full max-w-xs">
-          <button className="w-full py-2 bg-blue-400 text-white rounded-full font-semibold cursor-pointer">
+          <button
+            onClick={handleSubmit}
+            className="w-full py-2 bg-blue-400 text-white rounded-full font-semibold cursor-pointer"
+          >
             Sign In
           </button>
         </div>
+
         <div className="mt-4">
           Already have an Account?
           <span className="text-blue-400 font-semibold">

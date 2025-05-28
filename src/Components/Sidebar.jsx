@@ -11,18 +11,25 @@ import {
   UserRoundPen,
   X,
 } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { isLoggedIn, logout } from "../utils/auth";
+import toast from "react-hot-toast";
 
 const links = [
   { name: "Tasks", href: "/", icon: <ClipboardCheck /> },
   { name: "Goals", href: "/goals", icon: <Target /> },
   { name: "Profile", href: "/profile", icon: <UserRoundPen /> },
-  { name: "Login", href: "/login", icon: <LogIn /> },
-  { name: "Logout", href: "/logout", icon: <LogOut /> },
 ];
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Log out successful");
+    navigate("/login");
+  };
 
   return (
     <>
@@ -56,6 +63,31 @@ export default function Sidebar() {
             </Link>
           </div>
         ))}
+
+        <div className="flex flex-col text-lg">
+          {isLoggedIn ? (
+            <>
+              <button onClick={handleLogout}>
+                <Link
+                  to="/login"
+                  className="flex gap-2 hover:bg-[#182F47] px-4 py-2 rounded transition duration-300"
+                >
+                  <p className="flex items-center gap-2">
+                    <LogOut /> Logout
+                  </p>
+                </Link>
+              </button>
+            </>
+          ) : (
+            <div>
+              <Link className="flex gap-2 hover:bg-[#182F47] px-4 py-2 rounded transition duration-300">
+                <button className="flex items-center gap-2">
+                  <LogIn /> Login
+                </button>
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Sidebar for Small Screens with Animation */}
@@ -87,6 +119,31 @@ export default function Sidebar() {
                 </Link>
               ))}
             </nav>
+            <div className="flex flex-col text-lg">
+              {isLoggedIn ? (
+                <div>
+                  <Link
+                    to="/login"
+                    className="flex gap-2 hover:bg-[#182F47] px-4 py-2 rounded transition duration-300"
+                  >
+                    <p
+                      onClick={handleLogout}
+                      className="flex items-center gap-2"
+                    >
+                      <LogOut /> Logout
+                    </p>
+                  </Link>
+                </div>
+              ) : (
+                <div>
+                  <Link className="flex gap-2 hover:bg-[#182F47] px-4 py-2 rounded transition duration-300">
+                    <button className="flex items-center gap-2">
+                      <LogIn /> Login
+                    </button>
+                  </Link>
+                </div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

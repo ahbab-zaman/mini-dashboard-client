@@ -40,42 +40,26 @@ export default function DragDropBoard() {
   const [newCategory, setNewCategory] = useState(goals[0]);
   const [selectedCategory, setSelectedCategory] = useState(goals[0]);
 
-  // Load tasks from localStorage
+  // Load tasks from backend
   useEffect(() => {
-    const storedTasks = localStorage.getItem("goals");
-    if (storedTasks) {
+    const fetchGoals = async () => {
       try {
-        const parsed = JSON.parse(storedTasks);
-        if (Array.isArray(parsed)) {
-          setTasks(parsed);
-        }
+        const res = await fetch("http://localhost:5000/api/goals");
+        const data = await res.json();
+        setTasks(data);
       } catch (err) {
-        console.error("Error parsing goals from localStorage", err);
+        console.error("Failed to load goals:", err);
       }
-    }
+    };
 
-    // Optionally restore selected category
-    const storedCategory = localStorage.getItem("selectedCategory");
-    if (storedCategory && goals.includes(storedCategory)) {
-      setSelectedCategory(storedCategory);
-    }
+    fetchGoals();
   }, []);
-
-  // Save tasks to localStorage
-  useEffect(() => {
-    localStorage.setItem("goals", JSON.stringify(tasks));
-  }, [tasks]);
-
-  // Save selected category to localStorage
-  useEffect(() => {
-    localStorage.setItem("selectedCategory", selectedCategory);
-  }, [selectedCategory]);
 
   const filteredTasks = tasks.filter(
     (task) => task.category === selectedCategory
   );
 
-  const completedCount = 1;
+  const completedCount = 1; // You can calculate based on task properties
   const progress =
     tasks.length > 0 ? Math.floor((completedCount / tasks.length) * 100) : 0;
 
@@ -83,30 +67,41 @@ export default function DragDropBoard() {
     const { active, over } = event;
     if (!over) return;
 
-    const oldIndex = tasks.findIndex((t) => t.id === active.id);
-    const newIndex = tasks.findIndex((t) => t.id === over.id);
+    const oldIndex = tasks.findIndex((t) => t._id === active.id);
+    const newIndex = tasks.findIndex((t) => t._id === over.id);
 
     if (oldIndex === -1 || newIndex === -1) return;
 
     setTasks((items) => arrayMove(items, oldIndex, newIndex));
+
+    // Optional: update order in DB
   }
 
-  function handleAddTask() {
+  async function handleAddTask() {
     if (!newTitle.trim()) return;
 
-    const newTask = {
-      id: Date.now().toString(),
-      title: newTitle.trim(),
-      category: newCategory,
-    };
+    try {
+      const res = await fetch("http://localhost:5000/api/goals", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          title: newTitle,
+          category: newCategory,
+        }),
+      });
 
-    setTasks((prev) => [...prev, newTask]);
-    setNewTitle("");
-    setNewCategory(goals[0]);
-    setShowModal(false);
-
-    // Optionally auto-switch to new task’s category
-    setSelectedCategory(newCategory);
+      const newGoal = await res.json();
+      setTasks((prev) => [...prev, newGoal]);
+      setNewTitle("");
+      setNewCategory(goals[0]);
+      setShowModal(false);
+      setSelectedCategory(newCategory);
+    } catch (err) {
+      console.error("Failed to add goal:", err);
+    }
   }
 
   return (
@@ -197,7 +192,7 @@ export default function DragDropBoard() {
       {/* DnD Context */}
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext
-          items={filteredTasks.map((task) => task.id)}
+          items={filteredTasks.map((task) => task._id)}
           strategy={verticalListSortingStrategy}
         >
           <div className="bg-gray-800 p-4 rounded-md min-h-[100px]">
@@ -208,8 +203,8 @@ export default function DragDropBoard() {
             ) : (
               filteredTasks.map((task) => (
                 <SortableItem
-                  key={task.id}
-                  id={task.id}
+                  key={task._id}
+                  id={task._id}
                   title={task.title}
                   category={task.category}
                 />
