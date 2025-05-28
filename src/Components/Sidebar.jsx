@@ -18,7 +18,6 @@ import toast from "react-hot-toast";
 const links = [
   { name: "Tasks", href: "/", icon: <ClipboardCheck /> },
   { name: "Goals", href: "/goals", icon: <Target /> },
-  { name: "Profile", href: "/profile", icon: <UserRoundPen /> },
 ];
 
 export default function Sidebar() {

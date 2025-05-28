@@ -139,107 +139,8 @@ export default function TaskManager() {
     exit: { opacity: 0, y: -10 },
   };
 
-  // DnD Sensors
   const sensors = useSensors(useSensor(PointerSensor));
 
-  // Sortable task component to enable dragging
-  // function SortableTask({ task, onDelete, onEdit }) {
-  //   const { attributes, listeners, setNodeRef, transform, transition } =
-  //     useSortable({ id: task._id });
-
-  //   const style = {
-  //     transform: CSS.Transform.toString(transform),
-  //     transition,
-  //   };
-
-  //   return (
-  //     <motion.div
-  //       ref={setNodeRef}
-  //       {...attributes}
-  //       {...listeners}
-  //       style={style}
-  //       initial="hidden"
-  //       animate="visible"
-  //       exit="exit"
-  //       variants={taskVariants}
-  //       layout
-  //       className="bg-[#1A2537] border border-gray-600 rounded p-4 mb-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-  //       onDoubleClick={() => onEdit(task)}
-  //       title="Double click to edit"
-  //     >
-  //       <h4 className="font-semibold">{task.title}</h4>
-  //       <p className="text-sm text-gray-400 whitespace-pre-wrap">
-  //         {task.description || "-"}
-  //       </p>
-  //       <div className="flex justify-between items-center mt-2">
-  //         <span className="text-xs text-gray-500 italic">{task.category}</span>
-  //         <button
-  //           onClick={(e) => {
-  //             e.stopPropagation();
-  //             onDelete(task._id);
-  //           }}
-  //           className="text-red-400 text-xs hover:underline"
-  //         >
-  //           Delete
-  //         </button>
-  //       </div>
-  //     </motion.div>
-  //   );
-  // }
-
-  // function SortableTask({ task, onDelete, onEdit }) {
-  //   const { attributes, listeners, setNodeRef, transform, transition } =
-  //     useSortable({ id: task._id });
-
-  //   const style = {
-  //     transform: CSS.Transform.toString(transform),
-  //     transition,
-  //   };
-
-  //   return (
-  //     <motion.div
-  //       ref={setNodeRef}
-  //       {...attributes}
-  //       {...listeners}
-  //       style={style}
-  //       initial="hidden"
-  //       animate="visible"
-  //       exit="exit"
-  //       variants={taskVariants}
-  //       layout
-  //       className="bg-[#1A2537] border border-gray-600 rounded p-4 mb-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-  //       // Removed onDoubleClick here
-  //     >
-  //       <h4 className="font-semibold">{task.title}</h4>
-  //       <p className="text-sm text-gray-400 whitespace-pre-wrap">
-  //         {task.description || "-"}
-  //       </p>
-  //       <div className="flex justify-between items-center mt-2">
-  //         <span className="text-xs text-gray-500 italic">{task.category}</span>
-  //         <div className="flex space-x-4">
-  //           <button
-  //             onClick={(e) => {
-  //               e.stopPropagation();
-  //               onEdit(task);
-  //             }}
-  //             className="text-blue-400 text-xs hover:underline"
-  //           >
-  //             Edit
-  //           </button>
-  //           <button
-  //             onClick={(e) => {
-  //               e.stopPropagation();
-  //               onDelete(task._id);
-  //             }}
-  //             className="text-red-400 text-xs hover:underline"
-  //           >
-  //             Delete
-  //           </button>
-  //         </div>
-  //       </div>
-  //     </motion.div>
-  //   );
-  // }
   function SortableTask({ task, onDelete, onEdit }) {
     const { attributes, listeners, setNodeRef, transform, transition } =
       useSortable({ id: task._id });
@@ -268,6 +169,14 @@ export default function TaskManager() {
             {task.description || "-"}
           </p>
           <span className="text-xs text-gray-500 italic">{task.category}</span>
+
+          <div>
+            {quote && task._id === tasks[tasks.length - 1]?._id && (
+              <div className="mt-2 text-sm text-purple-400 italic border-t border-gray-600 pt-2 w-full">
+                “{quote.q}” — {quote.a || "Unknown"}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Drag handle */}
@@ -544,13 +453,6 @@ export default function TaskManager() {
           </div>
         ))}
       </div>
-
-      {/* Motivational Quote */}
-      {quote && (
-        <blockquote className="mt-12 text-center italic text-gray-400 max-w-2xl mx-auto">
-          &ldquo;{quote.text}&rdquo; — <cite>{quote.author}</cite>
-        </blockquote>
-      )}
     </div>
   );
 }

@@ -137,7 +137,7 @@ export default function DragDropBoard() {
       {/* Add Goal Button */}
       <div className="mb-6">
         <button
-          className="px-6 py-2 bg-blue-400 hover:bg-sky-800 text-white font-semibold rounded-full transition-all duration-300 shadow-lg"
+          className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105"
           onClick={() => setShowModal(true)}
         >
           ➕ Add Goal
@@ -148,7 +148,9 @@ export default function DragDropBoard() {
       {showModal && (
         <div className="fixed inset-0 bg-[#0f172a]/70 backdrop-blur-md flex justify-center items-center z-50 transition-all duration-300">
           <div className="bg-[#1A2537]/80 p-6 rounded-2xl shadow-xl w-96 animate-fade-in-up">
-            <h3 className="text-2xl font-bold mb-4 text-white">Add New Goal</h3>
+            <h3 className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105">
+              Add New Goal
+            </h3>
             <input
               type="text"
               placeholder="Goal Title"
