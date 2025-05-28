@@ -10,7 +10,16 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={router}>
       <App />
-      <Toaster />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#1A2537",
+            color: "#fff",
+            zIndex: 9999, // ✅ Add your desired z-index here
+          },
+        }}
+      />
     </RouterProvider>
   </StrictMode>
 );

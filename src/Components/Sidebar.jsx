@@ -26,6 +26,8 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
     logout();
     toast.success("Log out successful");
     navigate("/login");
