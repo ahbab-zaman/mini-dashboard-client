@@ -15,7 +15,7 @@ const Register = () => {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
+      const res = await axios.post("https://mini-dashboard-server.vercel.app/api/auth/register", {
         username: form.name,
         email: form.email,
         password: form.password,

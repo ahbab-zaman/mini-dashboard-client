@@ -44,7 +44,7 @@ export default function DragDropBoard() {
   useEffect(() => {
     const fetchGoals = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/goals");
+        const res = await fetch("https://mini-dashboard-server.vercel.app/api/goals");
         const data = await res.json();
         setTasks(data);
       } catch (err) {
@@ -81,7 +81,7 @@ export default function DragDropBoard() {
     if (!newTitle.trim()) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/goals", {
+      const res = await fetch("https://mini-dashboard-server.vercel.app/api/goals", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

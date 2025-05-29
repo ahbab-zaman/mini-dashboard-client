@@ -18,7 +18,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const API_URL = "http://localhost:5000/api/tasks";
+const API_URL = "https://mini-dashboard-server.vercel.app/api/tasks";
 
 export default function TaskManager() {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -32,7 +32,7 @@ export default function TaskManager() {
 
   const fetchQuote = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/quote");
+      const res = await fetch("https://mini-dashboard-server.vercel.app/api/quote");
       const data = await res.json();
       setQuote(data[0]);
     } catch (err) {
