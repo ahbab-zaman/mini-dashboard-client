@@ -14,6 +14,7 @@ import {
 import { Link, useNavigate } from "react-router";
 import { isLoggedIn, logout } from "../utils/auth";
 import toast from "react-hot-toast";
+import ThemeToggler from "./ThemeToggler";
 
 const links = [
   { name: "Tasks", href: "/", icon: <ClipboardCheck /> },
@@ -35,7 +36,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Menu Icon for Small Screens */}
-      <div className="md:hidden p-4 flex justify-between items-center text-white">
+      <div className="md:hidden p-4 flex justify-between items-center">
         <h2 className="text-2xl font-bold px-[22px] flex items-center gap-2">
           <img className="w-10" src={logo} alt="" /> Nailed IT{" "}
         </h2>
@@ -47,11 +48,14 @@ export default function Sidebar() {
       </div>
 
       {/* Sidebar for Large Screens */}
-      <div className="hidden md:flex flex-col lg:w-72 w-screen h-screen text-white p-6 space-y-6 fixed top-0 left-0 ">
+      <div className="hidden md:flex flex-col lg:w-72 w-screen h-screen p-6 space-y-6 fixed top-0 left-0 ">
         <h2 className="text-2xl font-bold mb-[80px] px-[22px] flex items-center gap-2">
           <img className="w-10" src={logo} alt="" /> Nailed IT{" "}
         </h2>
-        <h4 className="font-bold px-6">Dashboard</h4>
+        <div>
+          <ThemeToggler />
+        </div>
+        <h4 className="font-bold px-6 ">Dashboard</h4>
         {links.map((link) => (
           <div className="text-lg">
             <Link

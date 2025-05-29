@@ -25,10 +25,10 @@ function SortableItem({ id, title, category }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="p-3 m-2 bg-gradient-to-br from-[#2E3B55] to-[#1A2537] border-gray-700 text-white rounded-md cursor-move shadow-md transition-transform transform hover:scale-105 hover:duration-500 font-bold text-lg border"
+      className="p-3 m-2 goal-card border-gray-700 text-white rounded-md cursor-move shadow-md transition-transform transform hover:scale-105 hover:duration-500 font-bold text-lg border"
     >
       <h4 className="font-bold">{title}</h4>
-      <p className="text-sm text-slate-200">{category}</p>
+      <p className="text-sm category italic">{category}</p>
     </div>
   );
 }
@@ -105,10 +105,10 @@ export default function DragDropBoard() {
   }
 
   return (
-    <div className="relative p-4 min-h-screen text-white">
+    <div className="relative p-4 min-h-screen ">
       <h2 className="text-3xl font-bold mb-4">🎯 Your Goals</h2>
 
-      <div className="w-full bg-gray-700 rounded-full h-4 mb-6">
+      <div className="w-full progress rounded-full h-4 mb-6">
         <div
           className="bg-green-500 h-4 rounded-full text-xs text-center"
           style={{ width: `${progress}%` }}
@@ -126,7 +126,7 @@ export default function DragDropBoard() {
             className={`w-[30%] rounded-xl p-6 shadow-md transition-transform transform hover:scale-105 text-center font-bold text-lg border ${
               selectedCategory === goal
                 ? "bg-gradient-to-br from-blue-500 to-indigo-700 text-white border-blue-700"
-                : "bg-gradient-to-br from-[#2E3B55] to-[#1A2537] border-gray-700 text-white"
+                : " goal-category"
             }`}
           >
             {goal}
@@ -148,7 +148,7 @@ export default function DragDropBoard() {
       {showModal && (
         <div className="fixed inset-0 bg-[#0f172a]/70 backdrop-blur-md flex justify-center items-center z-50 transition-all duration-300">
           <div className="bg-[#1A2537]/80 p-6 rounded-2xl shadow-xl w-96 animate-fade-in-up">
-            <h3 className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105">
+            <h3 className=" text-white font-bold py-2">
               Add New Goal
             </h3>
             <input
@@ -197,7 +197,7 @@ export default function DragDropBoard() {
           items={filteredTasks.map((task) => task._id)}
           strategy={verticalListSortingStrategy}
         >
-          <div className="bg-gray-800 p-4 rounded-md min-h-[100px]">
+          <div className="goal-box p-4 rounded-md min-h-[100px]">
             {filteredTasks.length === 0 ? (
               <p className="text-center text-gray-400 py-8">
                 No goals yet in <strong>{selectedCategory}</strong>.

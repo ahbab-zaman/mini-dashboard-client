@@ -10,10 +10,12 @@ const Navbar = () => {
     }
   }, []);
   return (
-    <div>
+    <div className="flex justify-between items-center">
+      <div></div>
       <h2 className="text-3xl font-bold text-center p-3">
         {username && <span>Hello, {username} 👋</span>}
       </h2>
+      <div></div>
     </div>
   );
 };

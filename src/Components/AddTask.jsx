@@ -154,7 +154,6 @@ export default function TaskManager() {
       <motion.div
         ref={setNodeRef}
         {...attributes}
-        // Removed {...listeners} here from the whole card
         style={style}
         initial="hidden"
         animate="visible"
@@ -218,7 +217,7 @@ export default function TaskManager() {
   }
 
   return (
-    <div className="text-white p-8 min-h-screen bg-gradient-to-br from-[#1a2537] to-[#0d1521]">
+    <div className="text-white p-8 min-h-screen addTask-bg">
       <button
         onClick={() => setIsAddOpen(true)}
         className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105 mb-8"
